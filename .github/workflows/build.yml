@@ -1,3 +1,4 @@
+
 name: Build SUCCESS LADDER APK
 
 on:
@@ -7,7 +8,7 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -22,12 +23,12 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: '17'
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Install Linux dependencies
         run: |
@@ -53,12 +54,23 @@ jobs:
           buildozer -v android debug 2>&1 | tee build.log
         timeout-minutes: 75
 
-      - name: Show actual build error
+      - name: Show build error
         if: failure()
         run: |
           if [ -f build.log ]; then
             tail -150 build.log
           fi
+
+      - name: Publish GitHub Release
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: مدرسة سلم النجاح
+          target_commitish: main
+          files: bin/*.apk
+          fail_on_unmatched_files: true
+          generate_release_notes: true
 
       - name: Upload APK and build log
         if: always()
