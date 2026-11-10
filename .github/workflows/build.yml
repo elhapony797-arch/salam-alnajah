@@ -1,84 +1,26 @@
+[app]
+title = Success Ladder - مدرسة سلم النجاح
+package.name = successladder
+package.domain = org.elhapony
+source.dir = .
+source.include_exts = py,png,jpg,kv,atlas,json,ttf
+version = 1.0.0
 
-name: Build SUCCESS LADDER APK
+requirements = python3,kivy==2.3.1
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+orientation = portrait
+fullscreen = 0
+android.permissions = INTERNET
 
-permissions:
-  contents: read
+android.api = 33
+android.minapi = 23
+android.ndk = 25b
+android.ndk_api = 23
+android.archs = arm64-v8a
+android.accept_sdk_license = True
 
-env:
-  P4A_RELEASE: "1"
+p4a.branch = v2024.01.21
 
-jobs:
-  build:
-    runs-on: ubuntu-22.04
-    timeout-minutes: 90
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install Linux dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            git zip unzip autoconf automake libtool \
-            pkg-config build-essential cmake \
-            zlib1g-dev libncurses5-dev libncursesw5-dev \
-            libffi-dev libssl-dev libsqlite3-dev \
-            liblzma-dev libbz2-dev libreadline-dev
-
-      - name: Install Python build tools
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install setuptools wheel
-          python -m pip install cython==0.29.36
-          python -m pip install buildozer==1.5.0
-
-      - name: Show build environment
-        run: |
-          python --version
-          java -version
-          buildozer --version
-
-      - name: Build APK
-        shell: bash
-        run: |
-          set -o pipefail
-          buildozer -v android debug 2>&1 | tee build.log
-        timeout-minutes: 75
-
-      - name: Show actual build error
-        if: failure()
-        run: |
-          if [ -f build.log ]; then
-            grep -n -i -E -B 8 -A 15 \
-            "error:|exception|traceback|fatal|failed|command failed" \
-            build.log | tail -150 || tail -150 build.log
-          fi
-
-      - name: Upload APK and build log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: SUCCESS-LADDER-BUILD
-          path: |
-            bin/*.apk
-            build.log
-          if-no-files-found: warn
-          retention-days: 7
+[buildozer]
+log_level = 2
+warn_on_root = 1
