@@ -7,8 +7,11 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 env:
-  PYTHONFORANDROID_PREREQUISITES_INSTALL_INTERACTIVE: "0"
+  P4A_RELEASE: "1"
 
 jobs:
   build:
@@ -30,24 +33,45 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install Linux dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev build-essential
+          sudo apt-get install -y \
+            git zip unzip \
+            autoconf automake libtool pkg-config \
+            build-essential cmake \
+            zlib1g-dev libncurses5-dev libncursesw5-dev \
+            libffi-dev libssl-dev \
+            libsqlite3-dev liblzma-dev \
+            libbz2-dev libreadline-dev
 
-      - name: Install Buildozer
+      - name: Install Python build tools
         run: |
-          python -m pip install --upgrade pip setuptools wheel
-          python -m pip install buildozer cython==0.29.36
+          python -m pip install --upgrade pip
+          python -m pip install setuptools wheel
+          python -m pip install cython==0.29.36
+          python -m pip install buildozer==1.5.0
+
+      - name: Show build environment
+        run: |
+          python --version
+          java -version
+          buildozer --version
 
       - name: Build APK
-        run: buildozer -v android debug
+        shell: bash
+        run: |
+          set -o pipefail
+          buildozer -v android debug 2>&1 | tee build.log
         timeout-minutes: 75
 
-      - name: Upload APK
+      - name: Upload APK and build log
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: SUCCESS-LADDER-APK
-          path: bin/*.apk
-          if-no-files-found: error
+          name: SUCCESS-LADDER-BUILD
+          path: |
+            bin/*.apk
+            build.log
+          if-no-files-found: warn
           retention-days: 7
