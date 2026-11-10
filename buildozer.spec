@@ -25,8 +25,7 @@ android.archs = arm64-v8a,armeabi-v7a
 
 android.accept_sdk_license = True
 
-icon.filename = %(source.dir)s/icon.png
-presplash.filename = %(source.dir)s/icon.png
+icon.filename = %(source.dir)s/icon.jpg.jpg
 
 p4a.branch = v2024.01.21
 
