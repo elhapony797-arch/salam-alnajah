@@ -37,13 +37,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            git zip unzip \
-            autoconf automake libtool pkg-config \
-            build-essential cmake \
+            git zip unzip autoconf automake libtool \
+            pkg-config build-essential cmake \
             zlib1g-dev libncurses5-dev libncursesw5-dev \
-            libffi-dev libssl-dev \
-            libsqlite3-dev liblzma-dev \
-            libbz2-dev libreadline-dev
+            libffi-dev libssl-dev libsqlite3-dev \
+            liblzma-dev libbz2-dev libreadline-dev
 
       - name: Install Python build tools
         run: |
@@ -64,6 +62,15 @@ jobs:
           set -o pipefail
           buildozer -v android debug 2>&1 | tee build.log
         timeout-minutes: 75
+
+      - name: Show actual build error
+        if: failure()
+        run: |
+          if [ -f build.log ]; then
+            grep -n -i -E -B 8 -A 15 \
+            "error:|exception|traceback|fatal|failed|command failed" \
+            build.log | tail -150 || tail -150 build.log
+          fi
 
       - name: Upload APK and build log
         if: always()
