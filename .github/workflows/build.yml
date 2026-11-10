@@ -46,9 +46,10 @@ jobs:
         run: |
           mkdir -p "$HOME/.android"
           touch "$HOME/.android/repositories.cfg"
+          yes | sdkmanager --licenses || true
 
       - name: Build APK
-        run: buildozer -v android debug
+        run: yes | buildozer -v android debug
         timeout-minutes: 75
 
       - name: Upload APK
