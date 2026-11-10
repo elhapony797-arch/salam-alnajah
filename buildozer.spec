@@ -1,4 +1,3 @@
-
 [app]
 title = مدرسة سلم النجاح
 package.name = successladder
@@ -9,7 +8,7 @@ source.include_exts = py,png,jpg,jpeg,kv,atlas,json,ttf
 
 version = 1.0.0
 
-requirements = python3,kivy==2.3.1
+requirements = python3,kivy==2.3.1,arabic-reshaper,python-bidi
 
 orientation = portrait
 fullscreen = 0
@@ -24,8 +23,6 @@ android.ndk_api = 23
 android.archs = arm64-v8a,armeabi-v7a
 
 android.accept_sdk_license = True
-
-icon.filename = %(source.dir)s/icon.jpg.jpg
 
 p4a.branch = v2024.01.21
 
