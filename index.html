@@ -4,85 +4,227 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>سلم النجاح</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
-:root{--bg:#0f1b3d;--card:#1a2a5c;--gold:#f5b942;--mut:#9fb0d9}
+:root{--bg:#0b1533;--card:#15244f;--card2:#1c2f66;--gold:#f5b942;--mut:#9fb0d9;--ok:#2ecc71;--bad:#e5484d;--blue:#4da3ff}
 *{box-sizing:border-box;margin:0;font-family:Tahoma,Arial,sans-serif}
-body{background:var(--bg);color:#fff;padding-bottom:70px}
-header{padding:20px;text-align:center;background:#1a2a5c;border-bottom:3px solid var(--gold)}
-header h1{color:var(--gold);font-size:22px}
-header p{color:var(--mut);font-size:13px;margin-top:4px}
+body{background:var(--bg);color:#fff;padding-bottom:80px}
+header{padding:18px 16px;background:linear-gradient(135deg,#1c2f66,#0b1533);border-bottom:3px solid var(--gold);display:flex;align-items:center;gap:12px}
+.logo{font-size:34px}
+header h1{color:var(--gold);font-size:21px}
+header p{color:var(--mut);font-size:12px;margin-top:3px}
 main{padding:14px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:10px}
-.stat{text-align:center;color:var(--mut)}
-.stat b{font-size:30px;color:var(--gold);display:block}
-input{width:100%;padding:11px;margin:5px 0;border-radius:10px;border:none;font-size:15px}
-button{padding:11px;border-radius:10px;border:none;font-size:15px;background:var(--gold);color:#000;font-weight:bold}
-.full{width:100%}
-.row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #2c3f7a;gap:8px}
-.del{background:#e5484d;color:#fff;padding:5px 10px;font-size:13px}
-.ok{background:#2ecc71}.no{background:#e5484d;color:#fff}
-nav{position:fixed;bottom:0;right:0;left:0;display:flex;background:#0a1330;border-top:1px solid var(--gold)}
-nav button{flex:1;background:none;color:var(--mut);border-radius:0;font-size:12px;padding:13px 2px}
-nav button.on{color:var(--gold)}
+h2{font-size:16px;color:var(--gold);margin:6px 0 10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px #0005}
+.stat{text-align:center;color:var(--mut);font-size:13px}
+.stat b{font-size:30px;color:var(--gold);display:block;margin-bottom:2px}
+.stat.b2 b{color:var(--blue)}.stat.b3 b{color:var(--ok)}
+input,select{width:100%;padding:11px;margin:5px 0;border-radius:10px;border:none;font-size:15px;background:#fff;color:#000}
+button{padding:11px;border-radius:10px;border:none;font-size:15px;background:var(--gold);color:#000;font-weight:bold;cursor:pointer}
+.full{width:100%;margin-top:4px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #2c3f7a;gap:8px}
+.row:last-child{border-bottom:none}
+.row small{color:var(--mut);display:block;font-size:12px;margin-top:2px}
+.del{background:var(--bad);color:#fff;padding:6px 11px;font-size:13px}
+.qr{background:var(--blue);color:#fff;padding:6px 11px;font-size:13px}
+.ok{background:var(--ok)}.no{background:var(--bad);color:#fff}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:bold;background:var(--card2);color:var(--gold)}
+nav{position:fixed;bottom:0;right:0;left:0;display:flex;background:#070e24;border-top:1px solid var(--gold);z-index:9;overflow-x:auto}
+nav button{flex:1;min-width:58px;background:none;color:var(--mut);border-radius:0;font-size:11px;padding:11px 1px;font-weight:normal}
+nav button.on{color:var(--gold);font-weight:bold}
 .sec{display:none}.sec.on{display:block}
+.bar{background:#070e24;border-radius:10px;height:14px;margin-top:8px;overflow:hidden}
+.bar div{background:linear-gradient(90deg,var(--gold),#ffd97a);height:14px;border-radius:10px;width:0;transition:width .4s}
+.mut{color:var(--mut);font-size:13px}
+#reader{width:100%;border-radius:12px;overflow:hidden;margin-top:8px}
+#msg{margin-top:10px;padding:12px;border-radius:12px;text-align:center;font-weight:bold;display:none}
+.in{background:var(--ok);color:#000}.out{background:var(--blue);color:#fff}.err{background:var(--bad);color:#fff}
+#modal{display:none;position:fixed;inset:0;background:#000c;z-index:20;align-items:center;justify-content:center;padding:20px}
+#cardbox{background:#fff;color:#000;border-radius:18px;padding:22px;text-align:center;width:100%;max-width:320px}
+#cardbox h3{color:#0b1533;margin-bottom:4px}
+#cardbox p{color:#555;font-size:13px;margin-bottom:12px}
+#qrbox{display:flex;justify-content:center;margin:10px 0}
+@media print{
+  body *{visibility:hidden}
+  #cardbox,#cardbox *{visibility:visible}
+  #cardbox{position:fixed;top:20px;right:0;left:0;margin:auto}
+  .noprint{display:none!important}
+}
 </style>
 </head>
 <body>
-<header><h1>🪜 سلم النجاح</h1><p>نظام إدارة المدرسة الذكية</p></header>
+<header><div class="logo">🪜</div><div><h1>سلم النجاح</h1><p>نظام إدارة المدرسة الذكية</p></div></header>
 <main>
+
 <div id="home" class="sec on">
   <div class="grid">
     <div class="card stat"><b id="cs">0</b>الطلاب</div>
-    <div class="card stat"><b id="ct">0</b>المعلمون</div>
-    <div class="card stat"><b id="cp">0</b>الحضور اليوم</div>
+    <div class="card stat b2"><b id="ct">0</b>المعلمون</div>
+    <div class="card stat b3"><b id="cp">0</b>الحضور اليوم</div>
     <div class="card stat"><b id="cf">0</b>الرسوم المدفوعة</div>
   </div>
-  <div class="card"><div style="color:var(--mut);font-size:13px">نسبة الحضور</div>
-  <div style="background:#0a1330;border-radius:10px;height:14px;margin-top:8px"><div id="bar" style="background:var(--gold);height:14px;border-radius:10px;width:0"></div></div></div>
+  <div class="card"><div class="mut">نسبة الحضور</div><div class="bar"><div id="bar"></div></div></div>
+  <div class="card"><div class="mut">المعدل العام للمدرسة</div><div style="font-size:28px;color:var(--gold);font-weight:bold;margin-top:6px" id="avg">—</div></div>
+  <div class="card"><div class="mut">إجمالي الرسوم</div>
+    <div style="margin-top:6px">المحصّل: <b id="paid" style="color:var(--ok)">0</b></div>
+    <div>المتبقي: <b id="due" style="color:var(--bad)">0</b></div></div>
 </div>
 
 <div id="stu" class="sec">
-  <div class="card"><input id="sn" placeholder="اسم الطالب"><input id="sc" placeholder="الصف"><button class="full" onclick="addS()">➕ إضافة طالب</button></div>
+  <div class="card"><h2>➕ إضافة طالب</h2><input id="sn" placeholder="اسم الطالب"><input id="sc" placeholder="الصف"><button class="full" onclick="addS()">إضافة طالب</button></div>
   <div class="card" id="ls"></div>
 </div>
 
 <div id="tea" class="sec">
-  <div class="card"><input id="tn" placeholder="اسم المعلم"><input id="tm" placeholder="المادة"><button class="full" onclick="addT()">➕ إضافة معلم</button></div>
+  <div class="card"><h2>➕ إضافة معلم</h2><input id="tn" placeholder="اسم المعلم"><input id="tm" placeholder="المادة"><button class="full" onclick="addT()">إضافة معلم</button></div>
   <div class="card" id="lt"></div>
 </div>
 
-<div id="att" class="sec"><div class="card" id="la"></div></div>
+<div id="att" class="sec">
+  <div class="card"><h2>✅ تحضير اليوم</h2><div class="mut">يتحدّث تلقائيًا عند مسح البطاقة في البوابة، أو اضغط الزر يدويًا</div>
+  <button class="full" style="background:var(--card2);color:#fff" onclick="resetAtt()">🔄 بدء يوم جديد (تصفير الحضور)</button></div>
+  <div class="card" id="la"></div>
+</div>
+
+<div id="gra" class="sec">
+  <div class="card"><h2>📝 تسجيل درجة (من 100)</h2>
+    <select id="gs"></select>
+    <input id="gm" placeholder="المادة (مثال: رياضيات)">
+    <input id="gv" type="number" min="0" max="100" placeholder="الدرجة من 100">
+    <button class="full" onclick="addG()">حفظ الدرجة</button></div>
+  <div class="card" id="lg"></div>
+</div>
 
 <div id="fee" class="sec">
-  <div class="card"><input id="fn" placeholder="اسم الطالب"><input id="fa" type="number" placeholder="المبلغ"><button class="full" onclick="addF()">➕ إضافة رسوم</button></div>
+  <div class="card"><h2>➕ إضافة رسوم</h2><input id="fn" placeholder="اسم الطالب"><input id="fa" type="number" placeholder="المبلغ"><button class="full" onclick="addF()">إضافة رسوم</button></div>
   <div class="card" id="lf"></div>
 </div>
+
+<div id="gate" class="sec">
+  <div class="card"><h2>🚪 بوابة الدخول والخروج</h2>
+    <div class="mut">وجّه الكاميرا نحو بطاقة الطالب</div>
+    <button class="full" onclick="startScan()">📷 تشغيل الكاميرا</button>
+    <button class="full" style="background:var(--card2);color:#fff" onclick="stopScan()">⏹ إيقاف الكاميرا</button>
+    <div id="reader"></div>
+    <div id="msg"></div>
+  </div>
+  <div class="card"><h2>⌨️ إدخال الرمز يدويًا</h2>
+    <input id="mc" placeholder="رمز الطالب (مثال: SN123456)">
+    <button class="full" onclick="record($('mc').value);$('mc').value=''">تسجيل</button></div>
+  <div class="card"><h2>🕒 آخر الحركات</h2><div id="ll"></div></div>
+</div>
+
 </main>
+
+<div id="modal" onclick="if(event.target===this)closeCard()">
+  <div id="cardbox">
+    <div style="font-size:30px">🪜</div>
+    <h3>مدرسة سلم النجاح</h3>
+    <p>بطاقة الطالب</p>
+    <div id="qrbox"></div>
+    <h3 id="cn"></h3>
+    <p id="cc"></p>
+    <p id="ci" style="font-family:monospace;color:#000"></p>
+    <button class="noprint full" onclick="window.print()">🖨 طباعة</button>
+    <button class="noprint full" style="background:#ddd" onclick="closeCard()">إغلاق</button>
+  </div>
+</div>
 
 <nav>
 <button class="on" onclick="show('home',this)">🏠<br>الرئيسية</button>
 <button onclick="show('stu',this)">🎓<br>الطلاب</button>
-<button onclick="show('tea',this)">👨‍🏫<br>المعلمون</button>
+<button onclick="show('gate',this)">🚪<br>البوابة</button>
 <button onclick="show('att',this)">✅<br>الحضور</button>
+<button onclick="show('gra',this)">📝<br>الدرجات</button>
+<button onclick="show('tea',this)">👨‍🏫<br>المعلمون</button>
 <button onclick="show('fee',this)">💰<br>الرسوم</button>
 </nav>
 
 <script>
 const $=id=>document.getElementById(id);
-let db=JSON.parse(localStorage.getItem('snj')||'{"s":[],"t":[],"f":[]}');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let db={s:[],t:[],f:[],g:[],l:[]};
+try{const x=JSON.parse(localStorage.getItem('snj'));if(x)db=Object.assign(db,x)}catch(e){}
+
+function newId(){
+  let id;
+  do{id='SN'+(Math.floor(Math.random()*900000)+100000)}while(db.s.some(x=>x.id===id));
+  return id;
+}
+db.s.forEach(x=>{if(!x.id)x.id=newId()});
+
 function save(){localStorage.setItem('snj',JSON.stringify(db));render()}
 function show(n,b){
+  if(n!=='gate')stopScan();
   document.querySelectorAll('.sec').forEach(e=>e.classList.remove('on'));
   document.querySelectorAll('nav button').forEach(e=>e.classList.remove('on'));
-  $(n).classList.add('on');b.classList.add('on');
+  $(n).classList.add('on');b.classList.add('on');window.scrollTo(0,0);
 }
-function addS(){if(!$('sn').value.trim())return;db.s.push({n:$('sn').value,c:$('sc').value,p:0});$('sn').value='';$('sc').value='';save()}
-function addT(){if(!$('tn').value.trim())return;db.t.push({n:$('tn').value,m:$('tm').value});$('tn').value='';$('tm').value='';save()}
-function addF(){if(!$('fn').value.trim())return;db.f.push({n:$('fn').value,a:$('fa').value,p:0});$('fn').value='';$('fa').value='';save()}
-function del(k,i){db[k].splice(i,1);save()}
+function addS(){if(!$('sn').value.trim())return;db.s.push({id:newId(),n:$('sn').value.trim(),c:$('sc').value.trim(),p:0});$('sn').value='';$('sc').value='';save()}
+function addT(){if(!$('tn').value.trim())return;db.t.push({n:$('tn').value.trim(),m:$('tm').value.trim()});$('tn').value='';$('tm').value='';save()}
+function addF(){if(!$('fn').value.trim())return;db.f.push({n:$('fn').value.trim(),a:Number($('fa').value)||0,p:0});$('fn').value='';$('fa').value='';save()}
+function addG(){
+  const si=$('gs').value,m=$('gm').value.trim(),v=Number($('gv').value);
+  if(si===''||!m||$('gv').value===''||v<0||v>100)return alert('أكمل البيانات (الدرجة من 0 إلى 100)');
+  db.g.push({s:db.s[si].n,m:m,v:v});$('gm').value='';$('gv').value='';save();
+}
+function del(k,i){if(confirm('هل أنت متأكد من الحذف؟')){db[k].splice(i,1);save()}}
 function tg(k,i){db[k][i].p=db[k][i].p?0:1;save()}
-function empty(){return '<div style="color:var(--mut)">لا توجد بيانات بعد</div>'}
+function resetAtt(){if(confirm('تصفير حضور كل الطلاب لبدء يوم جديد؟')){db.s.forEach(x=>x.p=0);save()}}
+function grade(v){return v>=90?'ممتاز':v>=80?'جيد جدًا':v>=70?'جيد':v>=50?'مقبول':'راسب'}
+function empty(){return '<div class="mut">لا توجد بيانات بعد</div>'}
+
+/* بطاقة الطالب */
+function showCard(i){
+  const s=db.s[i];
+  $('qrbox').innerHTML='';
+  new QRCode($('qrbox'),{text:s.id,width:190,height:190});
+  $('cn').textContent=s.n;$('cc').textContent=s.c||'';$('ci').textContent=s.id;
+  $('modal').style.display='flex';
+}
+function closeCard(){$('modal').style.display='none'}
+
+/* البوابة */
+let scanner=null,lastCode='',lastT=0;
+function startScan(){
+  if(scanner)return;
+  if(typeof Html5Qrcode==='undefined')return alert('تعذر تحميل مكتبة المسح، تأكد من الإنترنت');
+  scanner=new Html5Qrcode('reader');
+  scanner.start({facingMode:'environment'},{fps:10,qrbox:220},onScan).catch(()=>{
+    alert('تعذر تشغيل الكاميرا. اسمح للموقع باستخدام الكاميرا من إعدادات المتصفح.');
+    scanner=null;
+  });
+}
+function stopScan(){
+  if(scanner){const s=scanner;scanner=null;s.stop().then(()=>s.clear()).catch(()=>{})}
+}
+function onScan(text){
+  const now=Date.now();
+  if(text===lastCode&&now-lastT<5000)return;
+  lastCode=text;lastT=now;
+  record(text);
+}
+function flash(cls,txt){
+  const m=$('msg');m.className=cls;m.textContent=txt;m.style.display='block';
+  if(navigator.vibrate)navigator.vibrate(cls==='err'?[200,100,200]:120);
+}
+function record(code){
+  code=String(code).trim();
+  if(!code)return;
+  const st=db.s.find(x=>x.id===code);
+  if(!st)return flash('err','❌ رمز غير معروف');
+  const last=[...db.l].reverse().find(x=>x.id===st.id);
+  const type=(!last||last.t==='خروج')?'دخول':'خروج';
+  db.l.push({id:st.id,n:st.n,t:type,time:Date.now()});
+  if(db.l.length>500)db.l=db.l.slice(-500);
+  if(type==='دخول')st.p=1;
+  save();
+  flash(type==='دخول'?'in':'out',(type==='دخول'?'✅ دخول: ':'👋 خروج: ')+st.n);
+}
+function fmt(t){const d=new Date(t);return d.toLocaleDateString('ar')+' '+d.toLocaleTimeString('ar',{hour:'2-digit',minute:'2-digit'})}
+
 function render(){
   const p=db.s.filter(x=>x.p).length;
   $('cs').textContent=db.s.length;
@@ -90,10 +232,26 @@ function render(){
   $('cp').textContent=p;
   $('cf').textContent=db.f.filter(x=>x.p).length;
   $('bar').style.width=(db.s.length?p/db.s.length*100:0)+'%';
-  $('ls').innerHTML=db.s.map((x,i)=>`<div class="row"><span>${x.n} <small style="color:var(--mut)">${x.c}</small></span><button class="del" onclick="del('s',${i})">حذف</button></div>`).join('')||empty();
-  $('lt').innerHTML=db.t.map((x,i)=>`<div class="row"><span>${x.n} <small style="color:var(--mut)">${x.m}</small></span><button class="del" onclick="del('t',${i})">حذف</button></div>`).join('')||empty();
-  $('la').innerHTML=db.s.map((x,i)=>`<div class="row"><span>${x.n}</span><button class="${x.p?'ok':'no'}" onclick="tg('s',${i})">${x.p?'حاضر':'غائب'}</button></div>`).join('')||empty();
-  $('lf').innerHTML=db.f.map((x,i)=>`<div class="row"><span>${x.n} <small style="color:var(--mut)">${x.a}</small></span><button class="${x.p?'ok':'no'}" onclick="tg('f',${i})">${x.p?'مدفوع':'غير مدفوع'}</button></div>`).join('')||empty();
+  $('avg').textContent=db.g.length?(db.g.reduce((a,x)=>a+x.v,0)/db.g.length).toFixed(1)+' / 100':'—';
+  $('paid').textContent=db.f.filter(x=>x.p).reduce((a,x)=>a+x.a,0);
+  $('due').textContent=db.f.filter(x=>!x.p).reduce((a,x)=>a+x.a,0);
+  const cur=$('gs').value;
+  $('gs').innerHTML='<option value="">اختر الطالب</option>'+db.s.map((x,i)=>`<option value="${i}">${esc(x.n)}</option>`).join('');
+  $('gs').value=cur;
+  $('ls').innerHTML=db.s.map((x,i)=>`<div class="row"><span>${esc(x.n)}<small>${esc(x.c)} - ${esc(x.id)}</small></span><span><button class="qr" onclick="showCard(${i})">بطاقة</button> <button class="del" onclick="del('s',${i})">حذف</button></span></div>`).join('')||empty();
+  $('lt').innerHTML=db.t.map((x,i)=>`<div class="row"><span>${esc(x.n)}<small>${esc(x.m)}</small></span><button class="del" onclick="del('t',${i})">حذف</button></div>`).join('')||empty();
+  $('la').innerHTML=db.s.map((x,i)=>`<div class="row"><span>${esc(x.n)}</span><button class="${x.p?'ok':'no'}" onclick="tg('s',${i})">${x.p?'حاضر':'غائب'}</button></div>`).join('')||empty();
+  $('lf').innerHTML=db.f.map((x,i)=>`<div class="row"><span>${esc(x.n)}<small>${x.a}</small></span><span><button class="${x.p?'ok':'no'}" onclick="tg('f',${i})">${x.p?'مدفوع':'غير مدفوع'}</button> <button class="del" onclick="del('f',${i})">✕</button></span></div>`).join('')||empty();
+  $('ll').innerHTML=db.l.slice(-20).reverse().map(x=>`<div class="row"><span>${esc(x.n)}<small>${fmt(x.time)}</small></span><span class="badge" style="color:${x.t==='دخول'?'#2ecc71':'#4da3ff'}">${x.t}</span></div>`).join('')||empty();
+  let html='';
+  db.s.forEach(st=>{
+    const gs=db.g.map((x,i)=>({...x,i})).filter(x=>x.s===st.n);
+    if(!gs.length)return;
+    const av=gs.reduce((a,x)=>a+x.v,0)/gs.length;
+    html+=`<div style="margin-bottom:14px"><b>${esc(st.n)}</b> <span class="badge">المعدل ${av.toFixed(1)} - ${grade(av)}</span>`+
+    gs.map(x=>`<div class="row"><span>${esc(x.m)}</span><span>${x.v} <button class="del" onclick="del('g',${x.i})">✕</button></span></div>`).join('')+`</div>`;
+  });
+  $('lg').innerHTML=html||empty();
 }
 render();
 </script>
