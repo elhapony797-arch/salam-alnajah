@@ -1,0 +1,59 @@
+name: Build Capacitor APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Prepare web files
+        run: |
+          mkdir -p www
+          cp index.html www/index.html
+          for f in *.png *.jpg *.jpeg *.css *.js *.json; do
+            [ -f "$f" ] && cp "$f" www/ || true
+          done
+
+      - name: Create Capacitor project
+        run: |
+          mkdir app && cd app
+          npm init -y
+          npm i @capacitor/core @capacitor/cli @capacitor/android
+          cp -r ../www ./www
+          npx cap init "مدرسة سلم النجاح" org.elhapony.successladder --web-dir=www
+          npx cap add android
+
+      - name: Build APK
+        run: |
+          cd app/android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SCHOOL-APK
+          path: app/android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk
+          name: مدرسة سلم النجاح
+          files: app/android/app/build/outputs/apk/debug/app-debug.apk
