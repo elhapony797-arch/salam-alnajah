@@ -15,6 +15,9 @@ fullscreen = 0
 
 android.permissions = INTERNET
 
+icon.filename = %(source.dir)s/icon.jpg.jpg
+presplash.filename = %(source.dir)s/icon.jpg.jpg
+
 android.api = 33
 android.minapi = 23
 android.ndk = 25b
