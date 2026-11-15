@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0b1533">
-<title>سلم النجاح</title>
+<title>قمة</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
@@ -13,7 +13,7 @@
 body{background:var(--bg);color:#fff;padding-bottom:84px}
 header{padding:16px;background:linear-gradient(135deg,#1c2f66,#0b1533);border-bottom:3px solid var(--gold);display:flex;align-items:center;gap:12px}
 .logo{font-size:34px}
-header h1{color:var(--gold);font-size:21px}
+header h1{color:var(--gold);font-size:23px}
 header p{color:var(--mut);font-size:12px;margin-top:3px}
 main{padding:14px}
 h2{font-size:16px;color:var(--gold);margin:6px 0 10px}
@@ -39,6 +39,7 @@ button{padding:11px;border-radius:10px;border:none;font-size:15px;background:var
 nav{position:fixed;bottom:0;right:0;left:0;display:flex;background:#070e24;border-top:1px solid var(--gold);z-index:9;overflow-x:auto}
 nav button{flex:0 0 auto;min-width:64px;background:none;color:var(--mut);border-radius:0;font-size:11px;padding:11px 4px;font-weight:normal}
 nav button.on{color:var(--gold);font-weight:bold}
+nav button.ex{color:var(--gold);font-weight:bold}
 .sec{display:none}.sec.on{display:block}
 .bar{background:#070e24;border-radius:10px;height:14px;margin-top:8px;overflow:hidden}
 .bar div{background:linear-gradient(90deg,var(--gold),#ffd97a);height:14px;border-radius:10px;width:0;transition:width .4s}
@@ -65,7 +66,7 @@ nav button.on{color:var(--gold);font-weight:bold}
 </style>
 </head>
 <body>
-<header><div class="logo">🪜</div><div><h1>سلم النجاح</h1><p>نظام إدارة المدرسة الذكية</p></div></header>
+<header><div class="logo">🏔️</div><div><h1>قمة</h1><p>نظام إدارة المدرسة الذكية - مدرسة سلم النجاح</p></div></header>
 <main>
 
 <!-- الرئيسية -->
@@ -82,6 +83,9 @@ nav button.on{color:var(--gold);font-weight:bold}
     <div style="margin-top:6px">رسوم محصّلة: <b id="paid" style="color:var(--ok)">0</b></div>
     <div>رسوم متبقية: <b id="due" style="color:var(--bad)">0</b></div>
     <div>رواتب الشهر: <b id="sal" style="color:var(--warn)">0</b></div></div>
+  <div class="card"><h2>🎓 الامتحانات الإلكترونية</h2>
+    <div class="mut">دخول المعلمين والطلاب لإنشاء الامتحانات وحلها.</div>
+    <button class="full" onclick="location.href='exams.html'">فتح الامتحانات</button></div>
   <div class="card"><h2>⚠️ الإنذار المبكر</h2><div id="warns"></div></div>
   <div class="card"><h2>📢 آخر الإعلانات</h2><div id="homeann"></div></div>
   <div class="card"><h2>💾 النسخ الاحتياطي</h2>
@@ -152,10 +156,10 @@ nav button.on{color:var(--gold);font-weight:bold}
   <div class="card" id="lg"></div>
 </div>
 
-<!-- سلم الطالب -->
+<!-- الصعود نحو القمة -->
 <div id="lad" class="sec">
-  <div class="card"><h2>🪜 منح نقاط</h2>
-    <div class="mut">الحضور والتفوق والسلوك ترفع الطالب في السلم</div>
+  <div class="card"><h2>🏔️ منح نقاط</h2>
+    <div class="mut">الحضور والتفوق والسلوك ترفع الطالب نحو القمة</div>
     <select id="ps"></select>
     <select id="pt"><option value="10">⭐ تفوق دراسي (+10)</option><option value="5">🤝 سلوك ممتاز (+5)</option><option value="5">📖 واجب مكتمل (+5)</option><option value="3">🙋 مشاركة (+3)</option><option value="-5">⚠️ مخالفة سلوك (-5)</option></select>
     <button class="full" onclick="addP()">تسجيل</button></div>
@@ -193,7 +197,7 @@ nav button.on{color:var(--gold);font-weight:bold}
 <!-- بطاقة الطالب -->
 <div id="modal" onclick="if(event.target===this)closeCard()">
   <div class="box" id="cardbox">
-    <div style="font-size:30px">🪜</div><h3>مدرسة سلم النجاح</h3><p>بطاقة الطالب</p>
+    <div style="font-size:30px">🏔️</div><h3>قمة</h3><p>مدرسة سلم النجاح - بطاقة الطالب</p>
     <div id="qrbox"></div><h3 id="cn"></h3><p id="cc"></p><p id="ci" style="font-family:monospace;color:#000"></p>
     <button class="noprint full" onclick="window.print()">🖨 طباعة</button>
     <button class="noprint full" style="background:#ddd" onclick="closeCard()">إغلاق</button>
@@ -212,13 +216,14 @@ nav button.on{color:var(--gold);font-weight:bold}
 
 <nav>
 <button class="on" onclick="show('home',this)">🏠<br>الرئيسية</button>
+<button class="ex" onclick="location.href='exams.html'">🎓<br>امتحان</button>
 <button onclick="show('stu',this)">🎓<br>الطلاب</button>
 <button onclick="show('gate',this)">🚪<br>البوابة</button>
 <button onclick="show('att',this)">✅<br>الحضور</button>
 <button onclick="show('sch',this)">📅<br>الجدول</button>
 <button onclick="show('les',this)">📚<br>الدروس</button>
 <button onclick="show('gra',this)">📝<br>الدرجات</button>
-<button onclick="show('lad',this)">🪜<br>السلم</button>
+<button onclick="show('lad',this)">🏔️<br>القمة</button>
 <button onclick="show('par',this)">👪<br>الأولياء</button>
 <button onclick="show('tea',this)">👨‍🏫<br>الموظفون</button>
 <button onclick="show('fee',this)">💰<br>الرسوم</button>
@@ -231,10 +236,10 @@ let db={s:[],t:[],f:[],g:[],l:[],x:[],cl:[],h:[],a:[],pt:[],hist:[]};
 try{const x=JSON.parse(localStorage.getItem('snj'));if(x)db=Object.assign(db,x)}catch(e){}
 const DAYS=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس'];
 let curDay=DAYS[0];
+const SIGN='قمة - مدرسة سلم النجاح';
 
 function newId(){let id;do{id='SN'+(Math.floor(Math.random()*900000)+100000)}while(db.s.some(x=>x.id===id));return id}
 db.s.forEach(x=>{if(!x.id)x.id=newId()});
-/* ترحيل رسوم قديمة */
 db.f.forEach(x=>{if(!x.sid){const st=db.s.find(s=>s.n===x.n);if(st)x.sid=st.id}});
 
 function save(){localStorage.setItem('snj',JSON.stringify(db));render()}
@@ -291,12 +296,12 @@ function absence(id){
   const n=db.hist.filter(h=>!h.pres.includes(id)).length;return {d:days,n:n};
 }
 function level(p){
-  if(p>=200)return ['👑','قمة السلم'];
+  if(p>=200)return ['👑','القمة'];
   if(p>=120)return ['💎','الدرجة الخامسة'];
   if(p>=70)return ['🥇','الدرجة الرابعة'];
   if(p>=35)return ['🥈','الدرجة الثالثة'];
   if(p>=10)return ['🥉','الدرجة الثانية'];
-  return ['🪜','الدرجة الأولى'];
+  return ['🏔️','السفح'];
 }
 function warnings(){
   const w=[];
@@ -317,12 +322,12 @@ function report(s){
   t+=`📊 المعدل: ${av===null?'لا توجد درجات':av.toFixed(1)+' ('+gradeTxt(av)+')'}\n`;
   gs.forEach(g=>t+=`   • ${g.m}: ${g.v}\n`);
   t+=`\n📅 الغياب: ${a.n} من ${a.d} أيام مسجلة\n`;
-  t+=`🪜 سلم النجاح: ${pts} نقطة (${lv[1]})\n`;
+  t+=`🏔️ الصعود نحو القمة: ${pts} نقطة (${lv[1]})\n`;
   const dueAmt=db.f.filter(f=>f.sid===s.id&&!f.p).reduce((x,f)=>x+f.a,0);
   if(dueAmt>0)t+=`💰 رسوم متبقية: ${dueAmt}\n`;
   const hw=db.h.filter(h=>h.c===s.c&&h.d&&h.d>=new Date().toISOString().slice(0,10));
   if(hw.length){t+=`\n📝 واجبات قادمة:\n`;hw.forEach(h=>t+=`   • ${h.m}: ${h.t} (${h.d})\n`)}
-  t+=`\nمدرسة سلم النجاح`;
+  t+=`\n${SIGN}`;
   return t;
 }
 function waLink(phone,text){return 'https://wa.me/'+phone+'?text='+encodeURIComponent(text)}
@@ -350,7 +355,7 @@ function startScan(){
   if(scanner)return;
   if(typeof Html5Qrcode==='undefined')return alert('تعذر تحميل مكتبة المسح، تأكد من الإنترنت');
   scanner=new Html5Qrcode('reader');
-  scanner.start({facingMode:'environment'},{fps:10,qrbox:220},onScan).catch(()=>{alert('تعذر تشغيل الكاميرا. اسمح للموقع باستخدام الكاميرا.');scanner=null});
+  scanner.start({facingMode:'environment'},{fps:10,qrbox:220},onScan).catch(()=>{alert('تعذر تشغيل الكاميرا. اسمح للتطبيق باستخدام الكاميرا.');scanner=null});
 }
 function stopScan(){if(scanner){const s=scanner;scanner=null;s.stop().then(()=>s.clear()).catch(()=>{})}}
 function onScan(text){const now=Date.now();if(text===lastCode&&now-lastT<5000)return;lastCode=text;lastT=now;record(text)}
@@ -368,7 +373,7 @@ function record(code){
   save();
   flash(type==='دخول'?'in':'out',(type==='دخول'?'✅ دخول: ':'👋 خروج: ')+st.n);
   const tm=new Date(now).toLocaleTimeString('ar',{hour:'2-digit',minute:'2-digit'});
-  const txt=`السلام عليكم، نفيدكم بأن الطالب ${st.n} ${type==='دخول'?'وصل إلى المدرسة':'غادر المدرسة'} الساعة ${tm}. مدرسة سلم النجاح`;
+  const txt=`السلام عليكم، نفيدكم بأن الطالب ${st.n} ${type==='دخول'?'وصل إلى المدرسة':'غادر المدرسة'} الساعة ${tm}. ${SIGN}`;
   if(st.ph){$('notify').style.display='block';$('notifybtn').onclick=()=>window.open(waLink(st.ph,txt),'_blank')}
   else $('notify').style.display='none';
 }
@@ -378,7 +383,7 @@ const fmt=t=>{const d=new Date(t);return d.toLocaleDateString('ar')+' '+d.toLoca
 function exportData(){
   const b=new Blob([JSON.stringify(db)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);
-  a.download='salam-alnajah-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  a.download='qimma-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();
 }
 function importData(el){
   const f=el.files[0];if(!f)return;
@@ -387,7 +392,7 @@ function importData(el){
   r.readAsText(f);el.value='';
 }
 
-/* جدول */
+/* الجدول */
 function renderDays(){
   $('dayTabs').innerHTML=DAYS.map(d=>`<button class="${d===curDay?'on':''}" onclick="curDay='${d}';render()">${d}</button>`).join('');
   const items=db.x.map((x,i)=>({...x,i})).filter(x=>x.d===curDay).sort((a,b)=>a.p-b.p);
@@ -440,7 +445,7 @@ function render(){
   $('lt').innerHTML=db.t.map((x,i)=>`<div class="row"><span>${esc(x.n)}<small>${esc(x.m)}${x.sal?' - الراتب '+x.sal:''}</small></span><button class="del" onclick="del('t',${i})">حذف</button></div>`).join('')||empty();
   $('lf').innerHTML=db.f.map((x,i)=>`<div class="row"><span>${esc(x.n)}<small>${x.a}${x.d?' - '+esc(x.d):''}</small></span><span><button class="${x.p?'ok':'no'}" onclick="tg('f',${i})">${x.p?'مدفوع':'غير مدفوع'}</button> <button class="del" onclick="del('f',${i})">✕</button></span></div>`).join('')||empty();
 }
-function shareAnn(i){const a=db.a[i];window.open('https://wa.me/?text='+encodeURIComponent('📢 '+a.t+'\n'+a.b+'\nمدرسة سلم النجاح'),'_blank')}
+function shareAnn(i){const a=db.a[i];window.open('https://wa.me/?text='+encodeURIComponent('📢 '+a.t+'\n'+a.b+'\n'+SIGN),'_blank')}
 render();
 </script>
 </body>
