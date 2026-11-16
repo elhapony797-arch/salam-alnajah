@@ -1,3 +1,4 @@
+
 name: Build Capacitor APK
 
 on:
@@ -10,6 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     timeout-minutes: 40
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,6 +44,128 @@ jobs:
           npx cap init "قمة" org.elhapony.successladder --web-dir=www
           npx cap add android
 
+      - name: Add Android Share Shortcut
+        run: |
+          mkdir -p app/android/app/src/main/java/org/elhapony/successladder
+          mkdir -p app/android/app/src/main/res/drawable
+
+          cat > app/android/app/src/main/java/org/elhapony/successladder/MainActivity.java <<'EOF'
+          package org.elhapony.successladder;
+
+          import android.content.Intent;
+          import android.content.Context;
+          import android.content.pm.ShortcutInfo;
+          import android.content.pm.ShortcutManager;
+          import android.graphics.drawable.Icon;
+          import android.os.Build;
+          import android.os.Bundle;
+
+          import com.getcapacitor.BridgeActivity;
+
+          import java.util.Collections;
+
+          public class MainActivity extends BridgeActivity {
+
+              private static final String SHARE_ACTION =
+                  "org.elhapony.successladder.SHARE_QEMMA";
+
+              private static final String APK_URL =
+                  "https://github.com/elhapony797-arch/salam-alnajah/releases/download/apk/app-debug.apk";
+
+              @Override
+              public void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  installShareShortcut();
+                  handleShareIntent(getIntent());
+              }
+
+              @Override
+              protected void onNewIntent(Intent intent) {
+                  super.onNewIntent(intent);
+                  setIntent(intent);
+                  handleShareIntent(intent);
+              }
+
+              private void installShareShortcut() {
+                  if (Build.VERSION.SDK_INT < 25) return;
+
+                  ShortcutManager manager =
+                      getSystemService(ShortcutManager.class);
+
+                  if (manager == null) return;
+
+                  Intent shortcutIntent =
+                      new Intent(this, MainActivity.class);
+
+                  shortcutIntent.setAction(SHARE_ACTION);
+
+                  ShortcutInfo shortcut =
+                      new ShortcutInfo.Builder(this, "share_qemma")
+                          .setShortLabel("مشاركة قمة")
+                          .setLongLabel("مشاركة تطبيق قمة")
+                          .setIcon(Icon.createWithResource(
+                              this, R.drawable.ic_share_qemma))
+                          .setIntent(shortcutIntent)
+                          .build();
+
+                  manager.setDynamicShortcuts(
+                      Collections.singletonList(shortcut));
+
+                  if (Build.VERSION.SDK_INT >= 26
+                      && manager.isRequestPinShortcutSupported()) {
+
+                      boolean alreadyRequested =
+                          getSharedPreferences("qemma_shortcuts",
+                              Context.MODE_PRIVATE)
+                              .getBoolean("share_pinned", false);
+
+                      if (!alreadyRequested) {
+                          boolean requested =
+                              manager.requestPinShortcut(shortcut, null);
+
+                          if (requested) {
+                              getSharedPreferences("qemma_shortcuts",
+                                  Context.MODE_PRIVATE)
+                                  .edit()
+                                  .putBoolean("share_pinned", true)
+                                  .apply();
+                          }
+                      }
+                  }
+              }
+
+              private void handleShareIntent(Intent intent) {
+                  if (intent == null) return;
+
+                  if (SHARE_ACTION.equals(intent.getAction())) {
+                      Intent shareIntent =
+                          new Intent(Intent.ACTION_SEND);
+
+                      shareIntent.setType("text/plain");
+                      shareIntent.putExtra(
+                          Intent.EXTRA_TEXT,
+                          "حمّل تطبيق قمة لإدارة المدرسة:\n" + APK_URL
+                      );
+
+                      startActivity(Intent.createChooser(
+                          shareIntent, "مشاركة تطبيق قمة"));
+                  }
+              }
+          }
+          EOF
+
+          cat > app/android/app/src/main/res/drawable/ic_share_qemma.xml <<'EOF'
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="24dp"
+              android:height="24dp"
+              android:viewportWidth="24"
+              android:viewportHeight="24">
+              <path
+                  android:fillColor="#FFFFFFFF"
+                  android:pathData="M18,16.08c-0.76,0 -1.44,0.3 -1.96,0.77L8.91,12.7a3.3,3.3 0,0 0,0 -1.39l7.05,-4.11A3,3 0,1 0,15 5c0,0.23 0.03,0.46 0.08,0.68L8.03,9.79a3,3 0,1 0,0 4.42l7.12,4.16c-0.05,0.2 -0.07,0.41 -0.07,0.63a2.92,2.92 0,1 0,2.92 -2.92z"/>
+          </vector>
+          EOF
+
       - name: Build APK
         run: |
           cd app/android
@@ -51,12 +175,13 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: SCHOOL-APK
+          name: QEMMA-APK
           path: app/android/app/build/outputs/apk/debug/app-debug.apk
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: apk
-          name: قمة - مدرسة سلم النجاح
+          name: قمة - تطبيق إدارة المدرسة
           files: app/android/app/build/outputs/apk/debug/app-debug.apk
+          overwrite_files: true
