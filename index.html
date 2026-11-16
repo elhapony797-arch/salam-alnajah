@@ -58,9 +58,6 @@ nav button.ex{color:var(--gold);font-weight:bold}
 .days{display:flex;gap:6px;overflow-x:auto;margin-bottom:8px}
 .days button{flex:0 0 auto;background:var(--card2);color:#fff;padding:8px 14px;font-weight:normal}
 .days button.on{background:var(--gold);color:#000;font-weight:bold}
-.share-card{border:1px solid #4da3ff}
-.share-btn{background:linear-gradient(135deg,#2878e8,#1451ad);color:#fff;font-size:17px;padding:15px}
-.share-note{font-size:12px;color:var(--mut);line-height:1.8;margin-top:8px}
 @media print{
 body *{visibility:hidden}
 #cardbox,#cardbox *{visibility:visible}
@@ -86,15 +83,6 @@ body *{visibility:hidden}
     <div style="margin-top:6px">رسوم محصّلة: <b id="paid" style="color:var(--ok)">0</b></div>
     <div>رسوم متبقية: <b id="due" style="color:var(--bad)">0</b></div>
     <div>رواتب الشهر: <b id="sal" style="color:var(--warn)">0</b></div></div>
-
-  <div class="card share-card">
-    <h2>📲 مشاركة تطبيق قمة</h2>
-    <div class="mut">إرسال ملف تثبيت التطبيق APK إلى الآخرين.</div>
-    <button class="full share-btn" onclick="shareAPK()">📤 مشاركة التطبيق كملف APK</button>
-    <button class="full sec2" onclick="downloadAPK()">⬇️ تنزيل ملف التطبيق</button>
-    <div class="share-note">سيتم تجهيز ملف التثبيت من إصدار GitHub. إذا لم يدعم الهاتف المشاركة المباشرة، نزّل الملف وأرسله كمرفق.</div>
-    <div id="shareStatus" class="share-note" role="status"></div>
-  </div>
 
   <div class="card"><h2>🎓 الامتحانات الإلكترونية</h2>
     <div class="mut">دخول المعلمين والطلاب لإنشاء الامتحانات وحلها.</div>
@@ -440,67 +428,6 @@ $('lt').innerHTML=db.t.map((x,i)=>`<div class="row"><span>${esc(x.n)}<small>${es
 $('lf').innerHTML=db.f.map((x,i)=>`<div class="row"><span>${esc(x.n)}<small>${x.a}${x.d?' - '+esc(x.d):''}</small></span><span><button class="${x.p?'ok':'no'}" onclick="tg('f',${i})">${x.p?'مدفوع':'غير مدفوع'}</button> <button class="del" onclick="del('f',${i})">✕</button></span></div>`).join('')||empty();
 }
 function shareAnn(i){const a=db.a[i];window.open('https://wa.me/?text='+encodeURIComponent('📢 '+a.t+'\n'+a.b+'\n'+SIGN),'_blank')}
-
-/* مشاركة ملف APK */
-const APK_URL='https://github.com/elhapony797-arch/salam-alnajah/releases/download/apk/app-debug.apk';
-
-function setShareStatus(message){
-  const el=$('shareStatus');
-  if(el)el.textContent=message;
-}
-
-async function getAPKFile(){
-  const response=await fetch(APK_URL,{method:'GET'});
-  if(!response.ok)throw new Error('HTTP '+response.status);
-  const blob=await response.blob();
-  if(!blob.size)throw new Error('Empty APK');
-  return new File([blob],'Qemma.apk',{
-    type:'application/vnd.android.package-archive',
-    lastModified:Date.now()
-  });
-}
-
-async function shareAPK(){
-  setShareStatus('⏳ جارٍ تجهيز ملف التطبيق...');
-  try{
-    if(!navigator.share){
-      setShareStatus('المشاركة المباشرة غير مدعومة. سيتم تنزيل الملف.');
-      downloadAPK();
-      return;
-    }
-    const file=await getAPKFile();
-    if(navigator.canShare && !navigator.canShare({files:[file]})){
-      setShareStatus('هذا الهاتف لا يدعم مشاركة الملفات مباشرة. سيتم تنزيل APK.');
-      downloadAPK();
-      return;
-    }
-    await navigator.share({
-      title:'تطبيق قمة',
-      text:'تطبيق قمة - نظام إدارة المدرسة الذكية',
-      files:[file]
-    });
-    setShareStatus('تم فتح قائمة المشاركة. اختر واتساب أو التطبيق المطلوب.');
-  }catch(error){
-    if(error.name==='AbortError'){
-      setShareStatus('تم إلغاء المشاركة.');
-      return;
-    }
-    setShareStatus('تعذرت المشاركة المباشرة. جارٍ تنزيل ملف APK بدلًا منها.');
-    downloadAPK();
-  }
-}
-
-function downloadAPK(){
-  setShareStatus('⏳ جارٍ تنزيل ملف التطبيق...');
-  const link=document.createElement('a');
-  link.href=APK_URL;
-  link.download='Qemma.apk';
-  link.rel='noopener';
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  setTimeout(()=>setShareStatus('إذا لم يبدأ التنزيل، افتح رابط APK من المتصفح وحمّل الملف.'),1500);
-}
 
 render();
 </script>
