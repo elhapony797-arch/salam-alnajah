@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -66,7 +67,7 @@ nav button.ex{color:var(--gold);font-weight:bold}
 </style>
 </head>
 <body>
-<header><div class="logo">🏔️</div><div><h1>قمة</h1><p>نظام إدارة المدرسة الذكية - مدرسة سلم النجاح</p></div></header>
+<header><div class="logo">🏔️</div><div><h1>قمة</h1><p>نظام إدارة المدرسة الذكية</p></div></header>
 <main>
 
 <!-- الرئيسية -->
@@ -197,7 +198,7 @@ nav button.ex{color:var(--gold);font-weight:bold}
 <!-- بطاقة الطالب -->
 <div id="modal" onclick="if(event.target===this)closeCard()">
   <div class="box" id="cardbox">
-    <div style="font-size:30px">🏔️</div><h3>قمة</h3><p>مدرسة سلم النجاح - بطاقة الطالب</p>
+    <div style="font-size:30px">🏔️</div><h3>قمة</h3><p>بطاقة الطالب</p>
     <div id="qrbox"></div><h3 id="cn"></h3><p id="cc"></p><p id="ci" style="font-family:monospace;color:#000"></p>
     <button class="noprint full" onclick="window.print()">🖨 طباعة</button>
     <button class="noprint full" style="background:#ddd" onclick="closeCard()">إغلاق</button>
@@ -236,7 +237,7 @@ let db={s:[],t:[],f:[],g:[],l:[],x:[],cl:[],h:[],a:[],pt:[],hist:[]};
 try{const x=JSON.parse(localStorage.getItem('snj'));if(x)db=Object.assign(db,x)}catch(e){}
 const DAYS=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس'];
 let curDay=DAYS[0];
-const SIGN='قمة - مدرسة سلم النجاح';
+const SIGN='قمة';
 
 function newId(){let id;do{id='SN'+(Math.floor(Math.random()*900000)+100000)}while(db.s.some(x=>x.id===id));return id}
 db.s.forEach(x=>{if(!x.id)x.id=newId()});
