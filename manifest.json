@@ -1,13 +1,12 @@
-
 {
-  "name": "قمة",
-  "short_name": "قمة",
-  "description": "نظام إدارة المدرسة الذكية",
-  "start_url": "/salam-alnajah/app.html",
-  "scope": "/salam-alnajah/",
+  "background_color": "#ff5050",
+  "dir": "ltr",
   "display": "standalone",
-  "dir": "rtl",
-  "lang": "ar",
-  "background_color": "#0b1533",
-  "theme_color": "#0b1533"
+  "name": "elhapony797-arch.github",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "elhapony797-arch.github",
+  "start_url": "/",
+  "theme_color": "#000000",
+  "id": "qimma-school "
 }
