@@ -159,6 +159,25 @@ body *{visibility:hidden}
   <div class="card"><h2>الدروس</h2><div id="ll2"></div></div>
 </div>
 
+<div id="lab" class="sec">
+  <div class="card"><h2>🧪 مختبر قمة الذكي</h2>
+    <div class="mut">سجّل الدرس أولًا في تبويب الدروس، ثم اخترْه هنا وولّد التجربة.</div>
+    <select id="labl"></select>
+    <input id="laba" type="number" min="5" max="18" placeholder="عمر الطالب (مثال: 14)">
+    <textarea id="labx" placeholder="ملاحظات أو محتوى الدرس (اختياري، يحسّن النتيجة)"></textarea>
+    <button class="full" id="labgb" onclick="labGen()">✨ ولّد بالذكاء الاصطناعي</button></div>
+  <div class="card"><h2>✍️ كتابة يدوية (بدون ذكاء اصطناعي)</h2>
+    <textarea id="labme" placeholder="الشرح المبسط للدرس"></textarea>
+    <textarea id="labmq" placeholder="أسئلة الاختبار، كل سؤال في سطر:&#10;السؤال | خيار1 | خيار2 | خيار3 | رقم الصحيح&#10;مثال: عاصمة ليبيا؟ | طرابلس | بنغازي | سبها | 1"></textarea>
+    <button class="full sec2" onclick="labManual()">حفظ التجربة يدويًا</button></div>
+  <div class="card"><h2>🧫 التجارب</h2><div id="labls"></div></div>
+  <div class="card"><h2>🎓 تجربة الطالب</h2>
+    <input id="labcode" placeholder="رمز الطالب (مثال: SN123456)">
+    <select id="labe"></select>
+    <button class="full" onclick="labStart()">ابدأ التجربة</button></div>
+  <div class="card"><h2>📊 نتائج الطلاب</h2><div id="labrs"></div></div>
+</div>
+
 <div id="gra" class="sec">
   <div class="card"><h2>📝 تسجيل درجة (من 100)</h2>
     <select id="gs"></select><input id="gm" placeholder="المادة"><input id="gv" type="number" min="0" max="100" placeholder="الدرجة من 100">
@@ -220,6 +239,11 @@ body *{visibility:hidden}
   </div>
 </div>
 
+<div id="labview" style="display:none;position:fixed;inset:0;background:#0b1533;z-index:30;overflow:auto;padding:14px 14px 40px">
+  <button class="del" onclick="labClose()">✕ إغلاق</button>
+  <div id="labbody" style="margin-top:10px"></div>
+</div>
+
 <nav>
 <button class="on" onclick="show('home',this)">🏠<br>الرئيسية</button>
 <button class="ex" onclick="location.href='exams.html'">🎓<br>امتحان</button>
@@ -228,6 +252,7 @@ body *{visibility:hidden}
 <button onclick="show('att',this)">✅<br>الحضور</button>
 <button onclick="show('sch',this)">📅<br>الجدول</button>
 <button onclick="show('les',this)">📚<br>الدروس</button>
+<button onclick="show('lab',this)">🧪<br>المختبر</button>
 <button onclick="show('gra',this)">📝<br>الدرجات</button>
 <button onclick="show('lad',this)">🏔️<br>القمة</button>
 <button onclick="show('par',this)">👪<br>الأولياء</button>
@@ -238,11 +263,12 @@ body *{visibility:hidden}
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let db={s:[],t:[],f:[],g:[],l:[],x:[],cl:[],h:[],a:[],pt:[],hist:[]};
+let db={s:[],t:[],f:[],g:[],l:[],x:[],cl:[],h:[],a:[],pt:[],hist:[],lab:[],labres:[]};
 try{const x=JSON.parse(localStorage.getItem('snj'));if(x)db=Object.assign(db,x)}catch(e){}
 const DAYS=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس'];
 let curDay=DAYS[0];
 const SIGN='قمة';
+const AI_URL='https://elhaponi-app.elhaponyabdo66.workers.dev/';
 
 function newId(){let id;do{id='SN'+(Math.floor(Math.random()*900000)+100000)}while(db.s.some(x=>x.id===id));return id}
 db.s.forEach(x=>{if(!x.id)x.id=newId()});
@@ -388,7 +414,7 @@ function exportData(){
 function importData(el){
   const f=el.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x.s))throw 0;if(confirm('سيتم استبدال البيانات الحالية. متابعة؟')){db=Object.assign({s:[],t:[],f:[],g:[],l:[],x:[],cl:[],h:[],a:[],pt:[],hist:[]},x);save()}}catch(e){alert('ملف غير صالح')}};
+  r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x.s))throw 0;if(confirm('سيتم استبدال البيانات الحالية. متابعة؟')){db=Object.assign({s:[],t:[],f:[],g:[],l:[],x:[],cl:[],h:[],a:[],pt:[],hist:[],lab:[],labres:[]},x);save()}}catch(e){alert('ملف غير صالح')}};
   r.readAsText(f);el.value='';
 }
 
@@ -398,6 +424,167 @@ function renderDays(){
   $('lx').innerHTML=items.map(x=>`<div class="row"><span>الحصة ${x.p}: ${esc(x.m)}<small>${esc(x.c)}${x.t?' - '+esc(x.t):''}</small></span><button class="del" onclick="del('x',${x.i})">✕</button></div>`).join('')||empty();
 }
 function empty(){return '<div class="mut">لا توجد بيانات بعد</div>'}
+
+/* ===== مختبر قمة الذكي ===== */
+let LS=null;
+const arr=a=>Array.isArray(a)?a:[];
+function labQs(a){
+  return arr(a).filter(q=>q&&q.q&&Array.isArray(q.o)&&q.o.length>=2&&Number.isInteger(q.a)&&q.a>=0&&q.a<q.o.length)
+    .map(q=>({q:String(q.q),o:q.o.map(String),a:q.a}));
+}
+function labNorm(x){
+  const g=x&&x.game||{};
+  return {
+    explain:String(x&&x.explain||''),
+    diagram:arr(x&&x.diagram).map(String),
+    examples:arr(x&&x.examples).map(String),
+    game:{title:String(g.title||'لعبة المطابقة'),pairs:arr(g.pairs).filter(p=>p&&p.a&&p.b).map(p=>({a:String(p.a),b:String(p.b)}))},
+    questions:labQs(x&&x.questions),
+    quiz:labQs(x&&x.quiz)
+  };
+}
+function aiText(d){
+  if(d&&Array.isArray(d.candidates)&&d.candidates[0]){
+    const ps=(d.candidates[0].content&&d.candidates[0].content.parts)||[];
+    return ps.map(p=>p.text||'').join('\n');
+  }
+  if(typeof d==='string')return d;
+  return (d&&(d.text||d.answer||d.response||d.result))||'';
+}
+function labPrompt(les,age,extra){
+  return 'أنت معلم خبير. حوّل الدرس التالي إلى تجربة تعليمية للطالب.\n'
+   +'عنوان الدرس: '+les.t+'\nالمادة: '+les.m+'\nالصف: '+les.c+'\nعمر الطالب: '+age+'\n'
+   +'ملاحظات المعلم: '+(extra||'لا يوجد')+'\n\n'
+   +'أعد JSON فقط بدون أي نص قبله أو بعده وبدون علامات code، بهذا الشكل بالضبط:\n'
+   +'{"explain":"شرح مبسط يناسب الصف والعمر","diagram":["خطوة 1","خطوة 2","خطوة 3"],"examples":["مثال من الحياة اليومية"],"game":{"title":"عنوان اللعبة","pairs":[{"a":"مفهوم","b":"ما يطابقه"}]},"questions":[{"q":"سؤال","o":["خيار1","خيار2","خيار3"],"a":0}],"quiz":[{"q":"سؤال","o":["خيار1","خيار2","خيار3","خيار4"],"a":0}]}\n'
+   +'المطلوب: 3 أمثلة، 4 أزواج في اللعبة، 3 أسئلة تفاعلية، 5 أسئلة للاختبار. الحقل a هو رقم الخيار الصحيح ويبدأ من 0. لا تختلق معلومات غير صحيحة. اللغة: العربية الفصحى المبسطة.';
+}
+function labAdd(les,age,c){
+  db.lab.push({id:'L'+Date.now(),t:les.t,c:les.c,m:les.m,age:age,content:c,time:Date.now()});save();
+}
+async function labGen(){
+  const li=$('labl').value;
+  if(li==='')return alert('اختر درسًا من تبويب الدروس أولًا');
+  const les=db.cl[li],age=V('laba')||'غير محدد',extra=V('labx');
+  const b=$('labgb');b.disabled=true;b.textContent='⏳ جارٍ التوليد...';
+  const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),90000);
+  try{
+    const r=await fetch(AI_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:labPrompt(les,age,extra)}),signal:ctl.signal});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error('خطأ '+r.status+': '+JSON.stringify(d.error||d).slice(0,150));
+    const txt=String(aiText(d));
+    const s=txt.indexOf('{'),e=txt.lastIndexOf('}');
+    if(s<0||e<0)throw new Error('الرد ليس بالصيغة المطلوبة');
+    const c=labNorm(JSON.parse(txt.slice(s,e+1)));
+    if(!c.explain)throw new Error('الرد غير مكتمل');
+    labAdd(les,age,c);
+    alert('تم توليد التجربة ✅ وضعناها في قائمة التجارب');
+  }catch(err){
+    let m=err.name==='AbortError'?'انتهت المهلة':err.message;
+    if(m==='Failed to fetch')m='تعذر الوصول للخادم (قد يكون السبب إعدادات CORS أو الإنترنت)';
+    alert('تعذر التوليد: '+m+'\nيمكنك استخدام الكتابة اليدوية.');
+  }finally{clearTimeout(tm);b.disabled=false;b.textContent='✨ ولّد بالذكاء الاصطناعي'}
+}
+function labManual(){
+  const li=$('labl').value;
+  if(li==='')return alert('اختر درسًا من تبويب الدروس أولًا');
+  const ex=V('labme');
+  if(!ex)return alert('اكتب الشرح المبسط');
+  const quiz=[];
+  V('labmq').split('\n').forEach(line=>{
+    const p=line.split('|').map(x=>x.trim());
+    if(p.length<4)return;
+    const a=parseInt(p[p.length-1].replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)),10)-1;
+    const o=p.slice(1,-1).filter(Boolean);
+    if(p[0]&&o.length>=2&&a>=0&&a<o.length)quiz.push({q:p[0],o:o,a:a});
+  });
+  labAdd(db.cl[li],V('laba')||'',{explain:ex,diagram:[],examples:[],game:{title:'',pairs:[]},questions:[],quiz:quiz});
+  $('labme').value='';$('labmq').value='';
+  alert('تم حفظ التجربة ✅ ('+quiz.length+' سؤال)');
+}
+function labStart(){
+  const code=V('labcode').toUpperCase(),ei=$('labe').value;
+  const st=db.s.find(x=>x.id===code);
+  if(!st)return alert('رمز الطالب غير معروف');
+  if(ei==='')return alert('اختر التجربة');
+  labOpen(Number(ei),st.id);
+}
+function labOpen(i,sid){
+  const e=db.lab[i];if(!e)return;
+  const c=e.content;
+  LS={e:e,sid:sid,g:null,done:false};
+  let h='<h2>🧪 '+esc(e.t)+'</h2><div class="mut">'+esc(e.c)+' - '+esc(e.m)+'</div>';
+  if(sid){const st=db.s.find(x=>x.id===sid);h+='<div class="mut">الطالب: '+esc(st?st.n:'')+'</div>'}
+  h+='<div class="card" style="margin-top:10px"><h2>📖 الشرح</h2><div style="white-space:pre-wrap;line-height:1.9">'+esc(c.explain)+'</div></div>';
+  if(c.diagram.length){
+    h+='<div class="card"><h2>🗺️ مخطط توضيحي</h2>'+c.diagram.map((d,k)=>'<div style="background:var(--card2);border-radius:10px;padding:10px;text-align:center">'+esc(d)+'</div>'+(k<c.diagram.length-1?'<div style="text-align:center;color:var(--gold);font-size:20px">⬇</div>':'')).join('')+'</div>';
+  }
+  if(c.examples.length){
+    h+='<div class="card"><h2>🌍 أمثلة من الحياة</h2>'+c.examples.map(x=>'<div class="row"><span>• '+esc(x)+'</span></div>').join('')+'</div>';
+  }
+  if(c.game.pairs.length>1){
+    LS.g={sel:null,done:{},order:c.game.pairs.map((_,k)=>k).sort(()=>Math.random()-.5)};
+    h+='<div class="card"><h2>🎮 '+esc(c.game.title)+'</h2><div class="mut">اضغط عنصرًا من العمود الأول ثم ما يناسبه من العمود الثاني</div><div id="gbox"></div></div>';
+  }
+  if(c.questions.length){
+    h+='<div class="card"><h2>🙋 أسئلة تفاعلية</h2>'+c.questions.map((q,qi)=>'<div style="margin-bottom:12px"><b>'+(qi+1)+'. '+esc(q.q)+'</b>'+q.o.map((o,oi)=>'<button class="full sec2" style="margin:3px 0;text-align:right" onclick="labQ('+qi+','+oi+')">'+esc(o)+'</button>').join('')+'<div id="qf'+qi+'" style="margin-top:4px"></div></div>').join('')+'</div>';
+  }
+  if(c.quiz.length){
+    h+='<div class="card"><h2>📝 اختبار قياس الفهم</h2>'+c.quiz.map((q,qi)=>'<div style="margin-bottom:12px"><b>'+(qi+1)+'. '+esc(q.q)+'</b>'+q.o.map((o,oi)=>'<label style="display:block;padding:6px 0"><input type="radio" name="qz'+qi+'" value="'+oi+'" style="width:auto;margin:0 0 0 8px"> '+esc(o)+'</label>').join('')+'</div>').join('')
+      +(sid?'<button class="full" onclick="labSubmit()">تسليم الاختبار</button><div id="qres" style="margin-top:8px"></div>':'<div class="mut">وضع المعاينة: التسليم متاح عند الدخول برمز الطالب.</div>')+'</div>';
+  }
+  $('labbody').innerHTML=h;
+  $('labview').style.display='block';$('labview').scrollTop=0;
+  if(LS.g)labDraw();
+}
+function labDraw(){
+  const g=LS.g,p=LS.e.content.game.pairs;
+  $('gbox').innerHTML='<div class="grid"><div>'
+   +p.map((x,k)=>'<button class="full'+(g.done[k]?' ok':(g.sel===k?'':' sec2'))+'" style="margin:3px 0" onclick="labA('+k+')">'+esc(x.a)+'</button>').join('')
+   +'</div><div>'
+   +g.order.map(k=>'<button class="full'+(g.done[k]?' ok':' sec2')+'" style="margin:3px 0" onclick="labB('+k+')">'+esc(p[k].b)+'</button>').join('')
+   +'</div></div><div id="gm" class="mut" style="margin-top:6px;text-align:center">'+(Object.keys(g.done).length===p.length?'🎉 أحسنت! أكملت اللعبة':'')+'</div>';
+}
+function labA(k){if(LS.g.done[k])return;LS.g.sel=k;labDraw()}
+function labB(k){
+  const g=LS.g;if(g.sel===null||g.done[k])return;
+  if(g.sel===k){g.done[k]=1;g.sel=null;labDraw()}
+  else{labDraw();$('gm').textContent='❌ حاول مرة أخرى'}
+}
+function labQ(qi,oi){
+  const q=LS.e.content.questions[qi];
+  $('qf'+qi).textContent=oi===q.a?'✅ إجابة صحيحة':'❌ الصحيح: '+q.o[q.a];
+}
+function labSubmit(){
+  if(!LS||LS.done)return;
+  const q=LS.e.content.quiz;let s=0;
+  q.forEach((x,i)=>{const r=document.querySelector('input[name="qz'+i+'"]:checked');if(r&&Number(r.value)===x.a)s++});
+  LS.done=true;
+  db.labres.push({sid:LS.sid,eid:LS.e.id,score:s,total:q.length,time:Date.now()});
+  save();
+  $('qres').innerHTML='<div class="alert">نتيجتك: '+s+' من '+q.length+(s===q.length?' 🏆':'')+'</div>';
+}
+function labClose(){$('labview').style.display='none';LS=null}
+function labWa(i){
+  const r=db.labres[i];if(!r)return;
+  const st=db.s.find(s=>s.id===r.sid),ex=db.lab.find(e=>e.id===r.eid);
+  if(!st||!st.ph)return alert('أضف رقم ولي الأمر في بيانات الطالب أولًا');
+  const t='السلام عليكم '+(st.pn||'ولي أمر الطالب')+'،\nأكمل الطالب '+st.n+' تجربة «'+(ex?ex.t:'')+'» في مختبر قمة الذكي.\nالنتيجة: '+r.score+' من '+r.total+'.\n'+SIGN;
+  window.open(waLink(st.ph,t),'_blank');
+}
+function labRender(){
+  const cur=$('labl').value;
+  $('labl').innerHTML='<option value="">اختر الدرس</option>'+db.cl.map((x,i)=>`<option value="${i}">${esc(x.c)} - ${esc(x.m)} - ${esc(x.t)}</option>`).join('');
+  $('labl').value=cur;
+  const ce=$('labe').value;
+  $('labe').innerHTML='<option value="">اختر التجربة</option>'+db.lab.map((x,i)=>`<option value="${i}">${esc(x.t)} (${esc(x.c)})</option>`).join('');
+  $('labe').value=ce;
+  $('labls').innerHTML=db.lab.map((x,i)=>`<div class="row"><span>${esc(x.t)}<small>${esc(x.c)} - ${esc(x.m)}${x.age?' - عمر '+esc(x.age):''}</small></span><span><button class="qr" onclick="labOpen(${i},null)">معاينة</button> <button class="del" onclick="del('lab',${i})">✕</button></span></div>`).join('')||empty();
+  $('labrs').innerHTML=db.labres.map((r,i)=>({r,i})).reverse().slice(0,40).map(o=>{
+    const st=db.s.find(s=>s.id===o.r.sid),ex=db.lab.find(e=>e.id===o.r.eid);
+    return `<div class="row"><span>${esc(st?st.n:'—')}<small>${esc(ex?ex.t:'—')} - ${o.r.score}/${o.r.total} - ${fmt(o.r.time)}</small></span><span><button class="wa" onclick="labWa(${o.i})">واتساب</button> <button class="del" onclick="del('labres',${o.i})">✕</button></span></div>`
+  }).join('')||empty();
+}
 
 function render(){
   const p=db.s.filter(x=>x.p).length,w=warnings();
@@ -443,6 +630,8 @@ function render(){
 
   $('lt').innerHTML=db.t.map((x,i)=>`<div class="row"><span>${esc(x.n)}<small>${esc(x.m)}${x.sal?' - الراتب '+x.sal:''}</small></span><button class="del" onclick="del('t',${i})">حذف</button></div>`).join('')||empty();
   $('lf').innerHTML=db.f.map((x,i)=>`<div class="row"><span>${esc(x.n)}<small>${x.a}${x.d?' - '+esc(x.d):''}</small></span><span><button class="${x.p?'ok':'no'}" onclick="tg('f',${i})">${x.p?'مدفوع':'غير مدفوع'}</button> <button class="del" onclick="del('f',${i})">✕</button></span></div>`).join('')||empty();
+
+  labRender();
 }
 function shareAnn(i){const a=db.a[i];window.open('https://wa.me/?text='+encodeURIComponent('📢 '+a.t+'\n'+a.b+'\n'+SIGN),'_blank')}
 
