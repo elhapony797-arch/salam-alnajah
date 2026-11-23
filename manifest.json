@@ -1,0 +1,16 @@
+{
+  "name": "قمة",
+  "short_name": "قمة",
+  "description": "نظام إدارة المدرسة الذكية",
+  "start_url": "/salam-alnajah/app.html",
+  "scope": "/salam-alnajah/",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "ar",
+  "background_color": "#0b1533",
+  "theme_color": "#0b1533",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
