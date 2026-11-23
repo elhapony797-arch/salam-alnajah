@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0b1533">
+<link rel="manifest" href="manifest.json">
 <title>قمة</title>
 <meta property="og:title" content="قمة">
 <meta property="og:description" content="تطبيق قمة: حضور بالمسح، تقارير، وامتحانات إلكترونية.">
@@ -658,6 +659,7 @@ async function shareTo(k){
 }
 
 render();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 </script>
 </body>
 </html>
