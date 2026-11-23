@@ -1,6 +1,5 @@
 
-
-const CACHE = 'qimma-v2';
+const CACHE = 'qimma-v3';
 
 const FILES = [
   './',
