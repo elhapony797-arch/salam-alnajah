@@ -1,0 +1,14 @@
+{
+  "id": "qimma-school ",
+  "name": "قمة – نظام إدارة المدرسة الذكية",
+  "short_name": "قمة",
+  "description": "نظام ذكي متكامل لإدارة المدارس والطلاب والمعلمين والعملية التعليمية",
+  "start_url": "/salam-alnajah/app.html",
+  "scope": "/salam-alnajah/",
+  "display": "standalone",
+  "orientation": "any",
+  "dir": "rtl",
+  "lang": "ar",
+  "background_color": "#0b1533",
+  "theme_color": "#000000"
+}
