@@ -1,4 +1,3 @@
-
 {
   "id": "/salam-alnajah/",
   "name": "قمة – نظام إدارة المدرسة الذكية",
@@ -11,5 +10,13 @@
   "dir": "rtl",
   "lang": "ar",
   "background_color": "#0b1533",
-  "theme_color": "#0b1533"
+  "theme_color": "#0b1533",
+  "icons": [
+    {
+      "src": "/salam-alnajah/qimma-app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }
