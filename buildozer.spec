@@ -1,26 +1,36 @@
+
 [app]
-title = مدرسة سلم النجاح
-package.name = successladder
+
+title = قمة - مدرسة سلم النجاح
+
+package.name = qimma
+
 package.domain = org.elhapony
 
 source.dir = .
-source.include_exts = py,png,jpg,jpeg,kv,atlas,json,ttf
+
+source.include_exts = py,png,jpg,jpeg,kv,atlas,json,ttf,html,css,js,svg
 
 version = 1.0.0
 
 requirements = python3,kivy==2.3.1,pyjnius,android
 
 orientation = portrait
+
 fullscreen = 0
 
 android.permissions = INTERNET
 
-icon.filename = %(source.dir)s/icon.jpg.jpg
-presplash.filename = %(source.dir)s/icon.jpg.jpg
+icon.filename = %(source.dir)s/qimma-app-icon-512.png
+
+presplash.filename = %(source.dir)s/qimma-app-icon-512.png
 
 android.api = 33
+
 android.minapi = 23
+
 android.ndk = 25b
+
 android.ndk_api = 23
 
 android.archs = arm64-v8a,armeabi-v7a
@@ -29,6 +39,9 @@ android.accept_sdk_license = True
 
 p4a.branch = v2024.01.21
 
+
 [buildozer]
+
 log_level = 2
+
 warn_on_root = 1
