@@ -1,5 +1,5 @@
 
-name: Build Qimma App
+name: Build Qimma Android APK
 
 on:
   workflow_dispatch:
@@ -7,29 +7,49 @@ on:
     branches:
       - main
     paths:
-      - 'app.html'
-      - 'manifest.json'
-      - 'sw.js'
+      - 'main.py'
+      - 'buildozer.spec'
+      - 'icon.jpg.jpg'
+      - 'qimma-app-icon-512.png'
       - '.github/workflows/build.yml'
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check application files
+      - name: Install system dependencies
         run: |
-          test -f app.html
-          test -f manifest.json
-          test -f sw.js
+          sudo apt-get update
+          sudo apt-get install -y \
+            git zip unzip openjdk-17-jdk \
+            python3-pip python3-venv \
+            autoconf libtool pkg-config \
+            zlib1g-dev libncurses5-dev \
+            libncursesw5-dev cmake \
+            libffi-dev libssl-dev \
+            build-essential
 
-      - name: Validate manifest
-        run: |
-          python -m json.tool manifest.json
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-      - name: Build verification
+      - name: Install Buildozer
         run: |
-          echo "Qimma application files verified successfully."
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install buildozer cython==0.29.36
+
+      - name: Build Android APK
+        run: |
+          buildozer android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Qimma-Android-APK
+          path: bin/*.apk
+          if-no-files-found: error
